@@ -9,6 +9,7 @@ export default function Sidebar({ onToggleGrid }) {
       >
         Toggle Grid
       </button>
+      
     </div>
   );
 }

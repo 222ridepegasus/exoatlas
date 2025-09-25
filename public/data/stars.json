@@ -28,6 +28,25 @@
       { "name": "Barnard's Star", "spectral_type": "M4Ve" }
     ]
   },
+   {
+    "name": "Luhman 16",
+    "distance_ly": 6.50,
+    "ra": "10h49m19s",
+    "dec": "−53°19′10″",
+    "components": [
+      { "name": "Luhman 16 A", "spectral_type": "L8" },
+      { "name": "Luhman 16 B", "spectral_type": "T1" }
+    ]
+  },
+  {
+    "name": "WISE 0855−0714",
+    "distance_ly": 7.27,
+    "ra": "08h55m10s",
+    "dec": "−07°14′",
+    "components": [
+      { "name": "WISE 0855−0714", "spectral_type": "Y" }
+    ]
+  },
   {
     "name": "Wolf 359",
     "distance_ly": 7.86,
@@ -57,13 +76,13 @@
     ]
   },
   {
-    "name": "Luyten 726-8",
+    "name": "Luyten 726-8 (Gliese 65)",
     "distance_ly": 8.73,
     "ra": "01h39m01s",
     "dec": "−17°57′01″",
     "components": [
-      { "name": "Luyten 726-8 A", "spectral_type": "M5.5V" },
-      { "name": "Luyten 726-8 B", "spectral_type": "M6V" }
+      { "name": "BL Ceti", "spectral_type": "M5.5V" },
+      { "name": "UV Ceti", "spectral_type": "M6V" }
     ]
   },
   {
@@ -73,6 +92,15 @@
     "dec": "−23°50′10″",
     "components": [
       { "name": "Ross 154", "spectral_type": "M3.5V" }
+    ]
+  },
+  {
+    "name": "Luyten's Star",
+    "distance_ly": 12.36,
+    "ra": "07h27m24s",
+    "dec": "+05°13′33″",
+    "components": [
+      { "name": "Luyten's Star", "spectral_type": "M3.5V" }
     ]
   }
 ]
