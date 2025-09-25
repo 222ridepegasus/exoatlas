@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import InfoPanel from "./InfoPanel.jsx";
 import Sidebar from "./Sidebar.jsx";
+import { Text } from "troika-three-text";
 
 const createHighlightTexture = () => {
   const canvas = document.createElement("canvas");
@@ -71,11 +72,31 @@ const raDecToXYZ = (ra, dec, distance) => {
   return new THREE.Vector3(x, y, z);
 };
 
+// 🌈 Spectral type → colour mapping
+const spectralToColor = (spectralType) => {
+  if (!spectralType) return 0xffffff;
+  const s = spectralType.trim()[0].toUpperCase();
+  switch (s) {
+    case "O": return 0x3399ff; // bright blue
+    case "B": return 0x66ccff; // bright white-blue
+    case "A": return 0xffffff; // pure white
+    case "F": return 0xffff99; // light yellow
+    case "G": return 0xffff33; // bright yellow
+    case "K": return 0xff9900; // strong orange
+    case "M": return 0xff3300; // vivid red
+    case "L": return 0x996633; // warm brown
+    case "T": return 0x9933cc; // purple
+    case "Y": return 0x330033; // dark dark purple
+    default: return 0xffffff;
+  }
+};
+
 export default function Starfield() {
   const mountRef = useRef(null);
   const [selectedStar, setSelectedStar] = useState(null);
   const selectedStarRef = useRef(null);
   const starsRef = useRef([]);
+  const labelsRef = useRef([]);
   const gridHelperRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -91,21 +112,24 @@ export default function Starfield() {
     scene.background = new THREE.Color(0x0f0f1a);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(
+    const aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+
+    const perspectiveCamera = new THREE.PerspectiveCamera(
       60,
-      mountRef.current.clientWidth / mountRef.current.clientHeight,
+      aspect,
       0.1,
       1000
     );
-    camera.position.set(0, 5, 12);
-    cameraRef.current = camera;
+    perspectiveCamera.position.set(0, 5, 12);
+
+    cameraRef.current = perspectiveCamera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    const controls = new OrbitControls(cameraRef.current, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controlsRef.current = controls;
@@ -137,10 +161,21 @@ export default function Starfield() {
         const data = await response.json();
 
         starsRef.current = []; // reset
+        labelsRef.current = []; // reset
         const starGeometry = new THREE.SphereGeometry(0.1, 16, 16);
 
         data.forEach((starInfo) => {
-          const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+          // Debug colours
+          console.log(
+            starInfo.name,
+            starInfo.spectral_type,
+            spectralToColor(starInfo.spectral_type)
+          );
+
+          const spectralType = starInfo.components?.[0]?.spectral_type;
+          const starMaterial = new THREE.MeshBasicMaterial({
+            color: spectralToColor(spectralType)
+          });
           const star = new THREE.Mesh(starGeometry, starMaterial);
 
           // Position using RA/Dec → XYZ conversion
@@ -174,7 +209,29 @@ export default function Starfield() {
           const ellipseMesh = new THREE.Mesh(ellipseGeometry, ellipseMaterial);
           ellipseMesh.position.set(pos.x, 0, pos.z);
           scene.add(ellipseMesh);
-        });
+
+          // Create label using troika-three-text
+          const label = new Text();
+          label.text = (starInfo.name || "").toUpperCase();
+          label.font = "/fonts/Orbitron-Regular.ttf";
+          label.fontSize = 0.20;
+          label.color = "#ffffff";
+
+          // Keep label anchored at star’s world position
+          label.position.copy(pos);
+
+          // Anchor the text so it renders out to the right of the star
+          label.anchorX = "left";     // push text right of anchor point
+          label.anchorY = "middle";   // vertically center
+
+          label.userData.starRef = star;
+          label.userData.pad = 0.2;      // horizontal padding from star
+          label.userData.vOffset = 0;
+
+          label.sync();
+          scene.add(label);
+          labelsRef.current.push(label);
+          });
       } catch (err) {
         console.error("Failed to load stars.json:", err);
       }
@@ -183,8 +240,10 @@ export default function Starfield() {
 
     // Resize handler
     const handleResize = () => {
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
-      camera.updateProjectionMatrix();
+      const aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+      cameraRef.current.aspect = aspect;
+      cameraRef.current.updateProjectionMatrix();
+
       renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     };
     window.addEventListener("resize", handleResize);
@@ -214,7 +273,7 @@ export default function Starfield() {
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-      raycaster.setFromCamera(mouse, camera);
+      raycaster.setFromCamera(mouse, cameraRef.current);
       const intersects = raycaster.intersectObjects(starsRef.current);
 
       if (intersects.length > 0) {
@@ -246,16 +305,40 @@ export default function Starfield() {
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
-      controls.update();
+      controlsRef.current.update();
 
-      if (highlight.visible) {
+      if (highlightRef.current.visible) {
         const elapsedTime = clockRef.current.getElapsedTime();
         const pulse = (Math.sin(elapsedTime * Math.PI * 2) + 1) / 2;
         const scale = 0.5 + pulse * 0.1; // 0.5 → 0.6
-        highlight.scale.set(scale, scale, 1);
+        highlightRef.current.scale.set(scale, scale, 1);
       }
 
-      renderer.render(scene, camera);
+      // Make labels face the camera and offset properly
+      labelsRef.current.forEach(label => {
+        const star = label.userData.starRef;
+        if (!star) return;
+
+        // Calculate right and up vectors from the camera
+        const right = new THREE.Vector3();
+        const up = new THREE.Vector3();
+        const cam = cameraRef.current;
+        cam.getWorldDirection(right);
+        right.cross(cam.up).normalize(); // camera right vector
+        up.copy(cam.up).normalize();     // camera up vector
+
+        // Position = star position + offset
+        const basePos = star.position.clone();
+        const offset = right.multiplyScalar(label.userData.pad || 0.3)
+          .add(up.multiplyScalar(label.userData.vOffset || 0));
+        label.position.copy(basePos.add(offset));
+
+        // Keep facing camera
+        label.quaternion.copy(cam.quaternion);
+        label.sync();
+      });
+
+      renderer.render(scene, cameraRef.current);
     };
     animate();
 
