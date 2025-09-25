@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Sol",
+    "distance_ly": 0,
+    "ra": "00h00m00s",
+    "dec": "00°00′00″",
+    "components": [
+      { "name": "Sol", "spectral_type": "G2V" }
+    ]
+  },
+  {
+    "name": "Alpha Centauri",
+    "distance_ly": 4.34,
+    "ra": "14h39m",
+    "dec": "-60°50′",
+    "components": [
+      { "name": "Alpha Centauri A", "spectral_type": "G2V" },
+      { "name": "Alpha Centauri B", "spectral_type": "K1V" },
+      { "name": "Proxima Centauri", "spectral_type": "M5.5Ve" }
+    ]
+  },
+  {
+    "name": "Barnard's Star",
+    "distance_ly": 5.96,
+    "ra": "17h57m48s",
+    "dec": "+04°41′36″",
+    "components": [
+      { "name": "Barnard's Star", "spectral_type": "M4Ve" }
+    ]
+  },
+  {
+    "name": "Wolf 359",
+    "distance_ly": 7.86,
+    "ra": "10h56m29s",
+    "dec": "+07°00′53″",
+    "components": [
+      { "name": "Wolf 359", "spectral_type": "M6V" }
+    ]
+  },
+  {
+    "name": "Lalande 21185",
+    "distance_ly": 8.30,
+    "ra": "11h03m20s",
+    "dec": "+35°58′12″",
+    "components": [
+      { "name": "Lalande 21185", "spectral_type": "M2V" }
+    ]
+  },
+  {
+    "name": "Sirius",
+    "distance_ly": 8.58,
+    "ra": "06h45m09s",
+    "dec": "−16°42′58″",
+    "components": [
+      { "name": "Sirius A", "spectral_type": "A1V" },
+      { "name": "Sirius B", "spectral_type": "DA2" }
+    ]
+  },
+  {
+    "name": "Luyten 726-8",
+    "distance_ly": 8.73,
+    "ra": "01h39m01s",
+    "dec": "−17°57′01″",
+    "components": [
+      { "name": "Luyten 726-8 A", "spectral_type": "M5.5V" },
+      { "name": "Luyten 726-8 B", "spectral_type": "M6V" }
+    ]
+  },
+  {
+    "name": "Ross 154",
+    "distance_ly": 9.69,
+    "ra": "18h49m49s",
+    "dec": "−23°50′10″",
+    "components": [
+      { "name": "Ross 154", "spectral_type": "M3.5V" }
+    ]
+  }
+]
