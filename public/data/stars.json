@@ -28,25 +28,6 @@
       { "name": "Barnard's Star", "spectral_type": "M4Ve" }
     ]
   },
-   {
-    "name": "Luhman 16",
-    "distance_ly": 6.50,
-    "ra": "10h49m19s",
-    "dec": "−53°19′10″",
-    "components": [
-      { "name": "Luhman 16 A", "spectral_type": "L8" },
-      { "name": "Luhman 16 B", "spectral_type": "T1" }
-    ]
-  },
-  {
-    "name": "WISE 0855−0714",
-    "distance_ly": 7.27,
-    "ra": "08h55m10s",
-    "dec": "−07°14′",
-    "components": [
-      { "name": "WISE 0855−0714", "spectral_type": "Y" }
-    ]
-  },
   {
     "name": "Wolf 359",
     "distance_ly": 7.86,
@@ -76,13 +57,13 @@
     ]
   },
   {
-    "name": "Luyten 726-8 (Gliese 65)",
+    "name": "Luyten 726-8",
     "distance_ly": 8.73,
     "ra": "01h39m01s",
     "dec": "−17°57′01″",
     "components": [
-      { "name": "BL Ceti", "spectral_type": "M5.5V" },
-      { "name": "UV Ceti", "spectral_type": "M6V" }
+      { "name": "Luyten 726-8 A", "spectral_type": "M5.5V" },
+      { "name": "Luyten 726-8 B", "spectral_type": "M6V" }
     ]
   },
   {
@@ -95,12 +76,192 @@
     ]
   },
   {
+    "name": "Ross 248",
+    "distance_ly": 10.3057,
+    "ra": "23h41m54.7s",
+    "dec": "+44°10′30″",
+    "components": [
+      { "name": "Ross 248", "spectral_type": "M5.5Ve" }
+    ]
+  },
+  {
+    "name": "Epsilon Eridani",
+    "distance_ly": 10.4749,
+    "ra": "03h32m55.8s",
+    "dec": "−09°27′30″",
+    "components": [
+      { "name": "Epsilon Eridani", "spectral_type": "K2V" }
+    ]
+  },
+  {
+    "name": "Lacaille 9352 (Gliese 887)",
+    "distance_ly": 10.7241,
+    "ra": "23h05m52.0s",
+    "dec": "−35°51′11″",
+    "components": [
+      { "name": "Lacaille 9352", "spectral_type": "M0.5V" }
+    ]
+  },
+  {
+    "name": "Ross 128",
+    "distance_ly": 11.0074,
+    "ra": "11h47m44.4s",
+    "dec": "+00°48′16″",
+    "components": [
+      { "name": "Ross 128", "spectral_type": "M4.0Vn" }
+    ]
+  },
+  {
+    "name": "EZ Aquarii (Gliese 866)",
+    "distance_ly": 11.109,
+    "ra": "22h38m33.4s",
+    "dec": "−15°17′57″",
+    "components": [
+      { "name": "EZ Aquarii A", "spectral_type": "M5.0Ve" },
+      { "name": "EZ Aquarii B", "spectral_type": "M?" },
+      { "name": "EZ Aquarii C", "spectral_type": "M?" }
+    ]
+  },
+  {
+    "name": "61 Cygni",
+    "distance_ly": 11.4039,
+    "ra": "21h06m53.9s",
+    "dec": "+38°44′58″",
+    "components": [
+      { "name": "61 Cygni A", "spectral_type": "K5.0V" },
+      { "name": "61 Cygni B", "spectral_type": "K7.0V" }
+    ]
+  },
+  {
+    "name": "Procyon (Alpha Canis Minoris)",
+    "distance_ly": 11.463,
+    "ra": "07h39m18.1s",
+    "dec": "+05°13′30″",
+    "components": [
+      { "name": "Procyon A", "spectral_type": "F5IV–V" },
+      { "name": "Procyon B", "spectral_type": "DQZ" }
+    ]
+  },
+  {
+    "name": "Struve 2398 (Gliese 725)",
+    "distance_ly": 11.498,
+    "ra": "18h42m46.7s",
+    "dec": "+59°37′49″",
+    "components": [
+      { "name": "Struve 2398 A", "spectral_type": "M3.0V" },
+      { "name": "Struve 2398 B", "spectral_type": "M3.5V" }
+    ]
+  },
+  {
+    "name": "Groombridge 34 (Gliese 15)",
+    "distance_ly": 11.6191,
+    "ra": "00h18m22.9s",
+    "dec": "+44°01′23″",
+    "components": [
+      { "name": "Groombridge 34 A", "spectral_type": "M1.5V" },
+      { "name": "Groombridge 34 B", "spectral_type": "M3.5V" }
+    ]
+  },
+  {
+    "name": "DX Cancri (G 51-15)",
+    "distance_ly": 11.6797,
+    "ra": "08h29m49.5s",
+    "dec": "+26°46′37″",
+    "components": [
+      { "name": "DX Cancri", "spectral_type": "M6.5Ve" }
+    ]
+  },
+  {
+    "name": "Epsilon Indi",
+    "distance_ly": 11.8670,
+    "ra": "22h03m21.7s",
+    "dec": "−56°47′10″",
+    "components": [
+      { "name": "Epsilon Indi A", "spectral_type": "K5Ve" },
+      { "name": "Epsilon Indi Ba", "spectral_type": "T1.0V" },
+      { "name": "Epsilon Indi Bb", "spectral_type": "T6.0V" }
+    ]
+  },
+  {
+    "name": "Tau Ceti",
+    "distance_ly": 11.9118,
+    "ra": "01h44m04.1s",
+    "dec": "−15°56′15″",
+    "components": [
+      { "name": "Tau Ceti", "spectral_type": "G8.5V" }
+    ]
+  },
+  {
+    "name": "GJ 1061",
+    "distance_ly": 11.9839,
+    "ra": "03h35m59.7s",
+    "dec": "−44°30′45″",
+    "components": [
+      { "name": "GJ 1061", "spectral_type": "M5.5V" }
+    ]
+  },
+  {
+    "name": "YZ Ceti",
+    "distance_ly": 12.222,
+    "ra": "01h12m30.6s",
+    "dec": "−16°59′56″",
+    "components": [
+      { "name": "YZ Ceti", "spectral_type": "M4.5V" }
+    ]
+  },
+  {
     "name": "Luyten's Star",
-    "distance_ly": 12.36,
-    "ra": "07h27m24s",
+    "distance_ly": 12.3485,
+    "ra": "07h27m24.5s",
     "dec": "+05°13′33″",
     "components": [
-      { "name": "Luyten's Star", "spectral_type": "M3.5V" }
+      { "name": "Luyten's Star", "spectral_type": "M3.5Vn" }
+    ]
+  },
+  {
+    "name": "Teegarden's Star",
+    "distance_ly": 12.4970,
+    "ra": "02h53m00.9s",
+    "dec": "+16°52′53″",
+    "components": [
+      { "name": "Teegarden's Star", "spectral_type": "M6.5V" }
+    ]
+  },
+  {
+    "name": "Kapteyn's Star",
+    "distance_ly": 12.8308,
+    "ra": "05h11m40.6s",
+    "dec": "−45°01′06″",
+    "components": [
+      { "name": "Kapteyn's Star", "spectral_type": "M1.5VI" }
+    ]
+  },
+  {
+    "name": "Lacaille 8760",
+    "distance_ly": 12.9347,
+    "ra": "21h17m35.3s",
+    "dec": "−38°52′03″",
+    "components": [
+      { "name": "Lacaille 8760", "spectral_type": "M0.0V" }
+    ]
+  },
+  {
+    "name": "Luhman 16 (WISE 1049-5319)",
+    "distance_ly": 6.5029,
+    "ra": "10h49m18.9s",
+    "dec": "−53°19′10″",
+    "components": [
+      { "name": "Luhman 16 A", "spectral_type": "L8" },
+      { "name": "Luhman 16 B", "spectral_type": "T1" }
+    ]
+  },
+  {
+    "name": "WISE 0855−0714",
+    "distance_ly": 7.227,
+    "ra": "08h55m10s",
+    "dec": "−07°14′00″",
+    "components": [
+      { "name": "WISE 0855−0714", "spectral_type": "Y" }
     ]
   }
 ]

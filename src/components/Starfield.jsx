@@ -212,7 +212,7 @@ export default function Starfield() {
 
           // Create label using troika-three-text
           const label = new Text();
-          label.text = (starInfo.name || "").toUpperCase();
+          label.text = (starInfo.name || starInfo.components?.[0]?.name || "").toUpperCase();
           label.font = "/fonts/Orbitron-Regular.ttf";
           label.fontSize = 0.20;
           label.color = "#ffffff";
