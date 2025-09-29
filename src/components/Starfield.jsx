@@ -105,6 +105,11 @@ export default function Starfield() {
   const highlightRef = useRef(null);
   const isDragging = useRef(false);
   const clockRef = useRef(new THREE.Clock());
+  const hoveredStarRef = useRef(null);
+  // Refs for smooth camera focus
+  const focusTargetRef = useRef(null);
+  const focusProgressRef = useRef(0);
+  const focusStartTimeRef = useRef(0);
 
   useEffect(() => {
     // Scene setup
@@ -173,10 +178,12 @@ export default function Starfield() {
           );
 
           const spectralType = starInfo.components?.[0]?.spectral_type;
-          const starMaterial = new THREE.MeshBasicMaterial({
-            color: spectralToColor(spectralType)
-          });
+          const baseColor = spectralToColor(spectralType);
+          const starMaterial = new THREE.MeshBasicMaterial({ color: baseColor });
           const star = new THREE.Mesh(starGeometry, starMaterial);
+
+          // Store original color
+          star.userData.originalColor = baseColor;
 
           // Position using RA/Dec → XYZ conversion
           const pos = raDecToXYZ(
@@ -267,6 +274,7 @@ export default function Starfield() {
     };
 
     const onMouseUp = (event) => {
+      if (event.button !== 0) return; // only handle left mouse button
       if (isDragging.current) return;
 
       const rect = renderer.domElement.getBoundingClientRect();
@@ -298,14 +306,86 @@ export default function Starfield() {
       }
     };
 
+    const onPointerMove = (event) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, cameraRef.current);
+      const intersects = raycaster.intersectObjects(starsRef.current);
+
+      if (intersects.length > 0) {
+        const star = intersects[0].object;
+        if (hoveredStarRef.current !== star) {
+          hoveredStarRef.current = star;
+          highlight.position.copy(star.position);
+          highlight.visible = true;
+        }
+      } else {
+        if (!selectedStarRef.current) {
+          highlight.visible = false;
+        }
+        hoveredStarRef.current = null;
+      }
+    };
+
     renderer.domElement.addEventListener("mousedown", onMouseDown);
     renderer.domElement.addEventListener("mousemove", onMouseMove);
     renderer.domElement.addEventListener("mouseup", onMouseUp);
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+
+    // Function to trigger smooth camera focus on a star
+    const focusOnStar = (star) => {
+      if (!star) return;
+      focusTargetRef.current = star.position.clone();
+      focusProgressRef.current = 0;
+      focusStartTimeRef.current = performance.now(); // record start time
+    };
+
+    // Right mouse button (context menu) handler to smoothly focus on selected star and keep InfoPanel open
+    const onRightClick = (event) => {
+      event.preventDefault();
+      if (selectedStarRef.current) {
+        focusOnStar(selectedStarRef.current);
+        setSelectedStar(selectedStarRef.current.userData); // keep InfoPanel open
+      }
+    };
+    renderer.domElement.addEventListener("contextmenu", onRightClick);
 
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
-      controlsRef.current.update();
+
+      // Smooth camera focus lerp
+      if (focusTargetRef.current) {
+        // Use elapsed time for smooth, duration-based animation
+        const elapsed = (performance.now() - focusStartTimeRef.current) / 1000; // seconds
+        const duration = 2.0; // seconds for full focus
+        const t = Math.min(elapsed / duration, 1);
+        focusProgressRef.current = t;
+
+        // Lerp OrbitControls target
+        controlsRef.current.target.lerp(focusTargetRef.current, t);
+
+        // Lerp camera spherical radius smoothly towards a closer distance
+        const offset = cameraRef.current.position.clone().sub(controlsRef.current.target);
+        const spherical = new THREE.Spherical().setFromVector3(offset);
+
+        const desiredRadius = 5; // zoom distance
+        spherical.radius = THREE.MathUtils.lerp(spherical.radius, desiredRadius, t);
+
+        // Recalculate camera position from spherical
+        const newPos = new THREE.Vector3().setFromSpherical(spherical).add(controlsRef.current.target);
+        cameraRef.current.position.copy(newPos);
+
+        controlsRef.current.update();
+
+        if (t >= 1) {
+          focusTargetRef.current = null; // stop lerping after finished
+        }
+      } else {
+        controlsRef.current.update();
+      }
 
       if (highlightRef.current.visible) {
         const elapsedTime = clockRef.current.getElapsedTime();
@@ -348,6 +428,8 @@ export default function Starfield() {
       renderer.domElement.removeEventListener("mousedown", onMouseDown);
       renderer.domElement.removeEventListener("mousemove", onMouseMove);
       renderer.domElement.removeEventListener("mouseup", onMouseUp);
+      renderer.domElement.removeEventListener("pointermove", onPointerMove);
+      renderer.domElement.removeEventListener("contextmenu", onRightClick);
       mountRef.current.removeChild(renderer.domElement);
     };
   }, []); // end useEffect

@@ -20,6 +20,16 @@
     ]
   },
   {
+    "name": "Luhman 16 (WISE 1049-5319)",
+    "distance_ly": 6.5029,
+    "ra": "10h49m18.9s",
+    "dec": "−53°19′10″",
+    "components": [
+      { "name": "Luhman 16 A", "spectral_type": "L8" },
+      { "name": "Luhman 16 B", "spectral_type": "T1" }
+    ]
+  },
+  {
     "name": "Barnard's Star",
     "distance_ly": 5.96,
     "ra": "17h57m48s",
@@ -35,6 +45,15 @@
     "dec": "+07°00′53″",
     "components": [
       { "name": "Wolf 359", "spectral_type": "M6V" }
+    ]
+  },
+  {
+    "name": "WISE 0855−0714",
+    "distance_ly": 7.227,
+    "ra": "08h55m10s",
+    "dec": "−07°14′00″",
+    "components": [
+      { "name": "WISE 0855−0714", "spectral_type": "Y" }
     ]
   },
   {
@@ -76,6 +95,16 @@
     ]
   },
   {
+    "name": "Ross 614",
+    "distance_ly": 9.74,
+    "ra": "16h28m29.9s",
+    "dec": "-12°39′40″",
+    "components": [
+      { "name": "Ross 614 A", "spectral_type": "M4.5V" },
+      { "name": "Ross 614 B", "spectral_type": "M8V" }
+    ]
+  },
+  {
     "name": "Ross 248",
     "distance_ly": 10.3057,
     "ra": "23h41m54.7s",
@@ -100,6 +129,16 @@
     "dec": "−35°51′11″",
     "components": [
       { "name": "Lacaille 9352", "spectral_type": "M0.5V" }
+    ]
+  },
+  {
+    "name": "Kruger 60",
+    "distance_ly": 11.08,
+    "ra": "23h27m40.5s",
+    "dec": "+07°04′04″",
+    "components": [
+      { "name": "Kruger 60 A", "spectral_type": "M3.5V" },
+      { "name": "Kruger 60 B", "spectral_type": "M4V" }
     ]
   },
   {
@@ -246,22 +285,86 @@
     ]
   },
   {
-    "name": "Luhman 16 (WISE 1049-5319)",
-    "distance_ly": 6.5029,
-    "ra": "10h49m18.9s",
-    "dec": "−53°19′10″",
+    "name": "SCR 1845−6357",
+    "distance_ly": 12.59,
+    "ra": "18h45m05.3s",
+    "dec": "−63°57′47″",
     "components": [
-      { "name": "Luhman 16 A", "spectral_type": "L8" },
-      { "name": "Luhman 16 B", "spectral_type": "T1" }
+      { "name": "SCR 1845−6357 A", "spectral_type": "M8.5V" },
+      { "name": "SCR 1845−6357 B", "spectral_type": "T6" }
     ]
   },
   {
-    "name": "WISE 0855−0714",
-    "distance_ly": 7.227,
-    "ra": "08h55m10s",
-    "dec": "−07°14′00″",
+    "name": "DENIS J1048−3956",
+    "distance_ly": 12.57,
+    "ra": "10h48m14.7s",
+    "dec": "−39°56′06″",
     "components": [
-      { "name": "WISE 0855−0714", "spectral_type": "Y" }
+      { "name": "DENIS J1048−3956", "spectral_type": "M8.5V" }
+    ]
+  },
+  {
+    "name": "Wolf 1061",
+    "distance_ly": 13.82,
+    "ra": "17h30m15.1s",
+    "dec": "−12°39′44″",
+    "components": [
+      { "name": "Wolf 1061", "spectral_type": "M3.5V" }
+    ]
+  },
+  {
+    "name": "Van Maanen’s Star",
+    "distance_ly": 14.09,
+    "ra": "13h19m45.8s",
+    "dec": "+17°49′02″",
+    "components": [
+      { "name": "Van Maanen’s Star", "spectral_type": "DZ7" }
+    ]
+  },
+  {
+    "name": "Gliese 1",
+    "distance_ly": 14.22,
+    "ra": "00h05m24.3s",
+    "dec": "−37°21′25″",
+    "components": [
+      { "name": "Gliese 1", "spectral_type": "M1.5V" }
+    ]
+  },
+  {
+    "name": "TZ Arietis",
+    "distance_ly": 14.33,
+    "ra": "02h15m19.7s",
+    "dec": "+17°40′24″",
+    "components": [
+      { "name": "TZ Arietis", "spectral_type": "M3.5V" }
+    ]
+  },
+  {
+    "name": "Wolf 424",
+    "distance_ly": 14.49,
+    "ra": "11h01m55.9s",
+    "dec": "+35°01′07″",
+    "components": [
+      { "name": "Wolf 424 A", "spectral_type": "M3.5V" },
+      { "name": "Wolf 424 B", "spectral_type": "M5.5V" }
+    ]
+  },
+  {
+    "name": "Gliese 687",
+    "distance_ly": 14.81,
+    "ra": "17h36m25.9s",
+    "dec": "+68°20′21″",
+    "components": [
+      { "name": "Gliese 687", "spectral_type": "M3.0V" }
+    ]
+  },
+  {
+    "name": "Gliese 674",
+    "distance_ly": 14.80,
+    "ra": "17h28m39.9s",
+    "dec": "−46°53′43″",
+    "components": [
+      { "name": "Gliese 674", "spectral_type": "M3.0V" }
     ]
   }
 ]
