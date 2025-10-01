@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { COLORS } from "../config/colors.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import InfoPanel from "./InfoPanel.jsx";
@@ -15,14 +16,14 @@ const createHighlightTexture = () => {
   context.beginPath();
   context.arc(64, 64, 40, 0, 2 * Math.PI);
   context.lineWidth = 8;
-  context.strokeStyle = "rgba(255, 255, 255, 1)";
+  context.strokeStyle = COLORS.highlightOuter;
   context.stroke();
 
   // Inner glow
   context.beginPath();
   context.arc(64, 64, 48, 0, 2 * Math.PI);
   context.lineWidth = 4;
-  context.strokeStyle = "rgba(255, 255, 255, 0.5)";
+  context.strokeStyle = COLORS.highlightInner;
   context.stroke();
 
   return new THREE.CanvasTexture(canvas);
@@ -98,6 +99,9 @@ export default function Starfield() {
   const starsRef = useRef([]);
   const labelsRef = useRef([]);
   const gridHelperRef = useRef(null);
+  const circularGridRef = useRef(null);
+  const stalksRef = useRef([]);
+  const connectionsRef = useRef([]);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -110,11 +114,39 @@ export default function Starfield() {
   const focusTargetRef = useRef(null);
   const focusProgressRef = useRef(0);
   const focusStartTimeRef = useRef(0);
+  // Track grid mode: "square" or "circular"
+  const [gridMode, setGridMode] = useState("circular");
+  // State for visibility toggles
+  const [showGrid, setShowGrid] = useState(true);
+  // Remove showStalks state, replaced by connectionMode
+  // const [showStalks, setShowStalks] = useState(true);
+  // New state for connection mode: "stalks" or "connections"
+  const [connectionMode, setConnectionMode] = useState("connections");
+
+  const [showLabels, setShowLabels] = useState(true);
+
+  // Helper to update visibility of stalks/connections based on connectionMode
+  function updateConnectionsVisibility() {
+    if (stalksRef.current && Array.isArray(stalksRef.current)) {
+      stalksRef.current.forEach(obj => {
+        if (obj && obj.visible !== undefined) {
+          obj.visible = connectionMode === "stalks";
+        }
+      });
+    }
+    if (connectionsRef.current && Array.isArray(connectionsRef.current)) {
+      connectionsRef.current.forEach(obj => {
+        if (obj && obj.visible !== undefined) {
+          obj.visible = connectionMode === "connections";
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f0f1a);
+    scene.background = new THREE.Color(COLORS.background);
     sceneRef.current = scene;
 
     const aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
@@ -154,10 +186,102 @@ export default function Starfield() {
     highlightRef.current = highlight;
 
     // Grid helper
-    const gridHelper = new THREE.GridHelper(20, 10, 0x888888, 0x444444);
-    gridHelper.visible = true;
+    const gridHelper = new THREE.GridHelper(20, 10, COLORS.gridSquare, COLORS.gridSquareMinor);
+    gridHelper.visible = false;
     scene.add(gridHelper);
     gridHelperRef.current = gridHelper;
+
+    // Circular grid (concentric rings)
+    const circularGridGroup = new THREE.Group();
+    // Radii in light years (scaled by 0.5)
+    const ringDistances = [4, 8, 12, 16, 20];
+    const segments = 128;
+    ringDistances.forEach((ly) => {
+      const radius = ly * 0.5;
+      const ringGeometry = new THREE.BufferGeometry();
+      const positions = [];
+      for (let i = 0; i < segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        positions.push(radius * Math.cos(theta), 0, radius * Math.sin(theta));
+      }
+      ringGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(positions, 3)
+      );
+      const ringMaterial = new THREE.LineBasicMaterial({
+        color: COLORS.gridCircular,
+        linewidth: 1,
+        opacity: 0.7,
+        transparent: true,
+      });
+      const ring = new THREE.LineLoop(ringGeometry, ringMaterial);
+      circularGridGroup.add(ring);
+    });
+    // Add NESW radial cross lines
+    const maxRadius = 20 * 0.5;
+    const lineMaterial = new THREE.LineBasicMaterial({
+      color: COLORS.gridCircular,
+      linewidth: 1,
+      opacity: 0.7,
+      transparent: true,
+    });
+    // E-W line: from (-maxRadius, 0, 0) to (maxRadius, 0, 0)
+    {
+      const ewGeometry = new THREE.BufferGeometry();
+      ewGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(
+          [-maxRadius, 0, 0, maxRadius, 0, 0],
+          3
+        )
+      );
+      const ewLine = new THREE.Line(ewGeometry, lineMaterial);
+      circularGridGroup.add(ewLine);
+    }
+    // N-S line: from (0, 0, -maxRadius) to (0, 0, maxRadius)
+    {
+      const nsGeometry = new THREE.BufferGeometry();
+      nsGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(
+          [0, 0, -maxRadius, 0, 0, maxRadius],
+          3
+        )
+      );
+      const nsLine = new THREE.Line(nsGeometry, lineMaterial);
+      circularGridGroup.add(nsLine);
+    }
+    // NE-SW line: from (-maxRadius/Math.SQRT2, 0, -maxRadius/Math.SQRT2) to (maxRadius/Math.SQRT2, 0, maxRadius/Math.SQRT2)
+    {
+      const d = maxRadius / Math.SQRT2;
+      const neswGeometry = new THREE.BufferGeometry();
+      neswGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(
+          [-d, 0, -d, d, 0, d],
+          3
+        )
+      );
+      const neswLine = new THREE.Line(neswGeometry, lineMaterial);
+      circularGridGroup.add(neswLine);
+    }
+    // NW-SE line: from (-maxRadius/Math.SQRT2, 0, maxRadius/Math.SQRT2) to (maxRadius/Math.SQRT2, 0, -maxRadius/Math.SQRT2)
+    {
+      const d = maxRadius / Math.SQRT2;
+      const nwseGeometry = new THREE.BufferGeometry();
+      nwseGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(
+          [-d, 0, d, d, 0, -d],
+          3
+        )
+      );
+      const nwseLine = new THREE.Line(nwseGeometry, lineMaterial);
+      circularGridGroup.add(nwseLine);
+    }
+    circularGridGroup.visible = true;
+    scene.add(circularGridGroup);
+    circularGridRef.current = circularGridGroup;
 
     // Load stars from JSON
     async function loadStars() {
@@ -167,8 +291,11 @@ export default function Starfield() {
 
         starsRef.current = []; // reset
         labelsRef.current = []; // reset
+        stalksRef.current = []; // reset
+        connectionsRef.current = []; // reset
         const starGeometry = new THREE.SphereGeometry(0.1, 16, 16);
 
+        // First, create all stars, stalks, ellipses, and labels
         data.forEach((starInfo) => {
           // Debug colours
           console.log(
@@ -202,9 +329,11 @@ export default function Starfield() {
           points.push(new THREE.Vector3(pos.x, pos.y, pos.z));
           points.push(new THREE.Vector3(pos.x, 0, pos.z));
           const stalkGeometry = new THREE.BufferGeometry().setFromPoints(points);
-          const stalkMaterial = new THREE.LineBasicMaterial({ color: 0x445577, linewidth: 1 });
+          const stalkMaterial = new THREE.LineBasicMaterial({ color: COLORS.stalkLine, linewidth: 1 });
           const stalkLine = new THREE.Line(stalkGeometry, stalkMaterial);
           scene.add(stalkLine);
+          stalkLine.visible = connectionMode === "stalks";
+          stalksRef.current.push(stalkLine);
 
           // Create small ellipse (circle) at base (y=0)
           const ellipseRadius = 0.05;
@@ -212,17 +341,19 @@ export default function Starfield() {
           const ellipseGeometry = new THREE.CircleGeometry(ellipseRadius, ellipseSegments);
           // Rotate to lie flat on XZ plane
           ellipseGeometry.rotateX(-Math.PI / 2);
-          const ellipseMaterial = new THREE.MeshBasicMaterial({ color: 0x445577 });
+          const ellipseMaterial = new THREE.MeshBasicMaterial({ color: COLORS.stalkEllipse });
           const ellipseMesh = new THREE.Mesh(ellipseGeometry, ellipseMaterial);
           ellipseMesh.position.set(pos.x, 0, pos.z);
           scene.add(ellipseMesh);
+          ellipseMesh.visible = connectionMode === "stalks";
+          stalksRef.current.push(ellipseMesh);
 
           // Create label using troika-three-text
           const label = new Text();
           label.text = (starInfo.name || starInfo.components?.[0]?.name || "").toUpperCase();
           label.font = "/fonts/Orbitron-Regular.ttf";
           label.fontSize = 0.20;
-          label.color = "#ffffff";
+          label.color = COLORS.labelText;
 
           // Keep label anchored at star’s world position
           label.position.copy(pos);
@@ -238,7 +369,47 @@ export default function Starfield() {
           label.sync();
           scene.add(label);
           labelsRef.current.push(label);
-          });
+        });
+
+        // Compute nearest-3 connections for each star
+        // Only add if star index < neighbour index to avoid duplicates
+        const stars = starsRef.current;
+        for (let i = 0; i < stars.length; i++) {
+          const star = stars[i];
+          // Compute distances to all other stars
+          const distances = [];
+          for (let j = 0; j < stars.length; j++) {
+            if (i === j) continue;
+            const other = stars[j];
+            const dist = star.position.distanceTo(other.position);
+            distances.push({ index: j, dist });
+          }
+          // Sort by distance and pick 3 nearest
+          distances.sort((a, b) => a.dist - b.dist);
+          for (let k = 0; k < Math.min(3, distances.length); k++) {
+            const neighbourIdx = distances[k].index;
+            if (i < neighbourIdx) {
+              // Create a line between star and neighbour
+              const neighbour = stars[neighbourIdx];
+              const lineGeom = new THREE.BufferGeometry().setFromPoints([
+                star.position,
+                neighbour.position
+              ]);
+              const lineMat = new THREE.LineBasicMaterial({
+                color: COLORS.connectionLine,
+                linewidth: 1,
+                opacity: 0.7,
+                transparent: true
+              });
+              const line = new THREE.Line(lineGeom, lineMat);
+              line.visible = connectionMode === "connections";
+              scene.add(line);
+              connectionsRef.current.push(line);
+            }
+          }
+        }
+        // After all stalks and connections have been pushed, update their visibility
+        updateConnectionsVisibility();
       } catch (err) {
         console.error("Failed to load stars.json:", err);
       }
@@ -432,18 +603,71 @@ export default function Starfield() {
       renderer.domElement.removeEventListener("contextmenu", onRightClick);
       mountRef.current.removeChild(renderer.domElement);
     };
+
   }, []); // end useEffect
 
-  // Sidebar controls
-  const toggleGrid = () => {
-    if (gridHelperRef.current) {
-      gridHelperRef.current.visible = !gridHelperRef.current.visible;
+  useEffect(() => {
+    updateConnectionsVisibility();
+  }, [connectionMode]);
+
+  useEffect(() => {
+    if (labelsRef.current) {
+      labelsRef.current.forEach(label => {
+        label.visible = showLabels;
+      });
     }
+  }, [showLabels]);
+
+  // Sidebar controls
+  // Toggle between grid modes: "square" and "circular"
+  const toggleGridMode = () => {
+    if (
+      !gridHelperRef.current ||
+      !circularGridRef.current
+    ) {
+      return;
+    }
+    if (gridMode === "square") {
+      gridHelperRef.current.visible = false;
+      circularGridRef.current.visible = true;
+      setGridMode("circular");
+    } else {
+      gridHelperRef.current.visible = true;
+      circularGridRef.current.visible = false;
+      setGridMode("square");
+    }
+  };
+
+  // Toggle grid visibility
+  const toggleGridVisibility = () => {
+    setShowGrid((prev) => {
+      const newVal = !prev;
+      if (gridHelperRef.current) gridHelperRef.current.visible = newVal && gridMode === "square";
+      if (circularGridRef.current) circularGridRef.current.visible = newVal && gridMode === "circular";
+      return newVal;
+    });
+  };
+
+  // Remove toggleStalksVisibility, replaced by handleConnectionModeChange
+
+  // Handle connection mode change ("stalks" or "connections")
+  const handleConnectionModeChange = (mode) => {
+    console.log("Connection mode changed to:", mode);
+    setConnectionMode(mode);
+  };
+
+  const toggleLabelsVisibility = () => {
+    setShowLabels(prev => !prev);
   };
 
   return (
     <>
-      <Sidebar onToggleGrid={toggleGrid} />
+      <Sidebar
+        onToggleGridMode={toggleGridMode}
+        onToggleGridVisibility={toggleGridVisibility}
+        onChangeConnectionMode={handleConnectionModeChange}
+        onToggleLabels={toggleLabelsVisibility}
+      />
       <div ref={mountRef} style={{ width: "100%", height: "100vh" }} />
       <InfoPanel
         star={selectedStar}
